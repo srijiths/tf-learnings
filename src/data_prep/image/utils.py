@@ -1,5 +1,5 @@
-''' 
-Utilitiy methods
+'''
+File read utility functions
 
 @author : srijith
 
@@ -7,21 +7,8 @@ Utilitiy methods
 from __future__ import print_function
 import os
 
-dataset = []
-
-# class to represent an Image object. image label and path is stored
-class ImageClass():
-    "Stores the paths to images for a given class"
-    def __init__(self, name, image_path):
-        self.name = name
-        self.image_path = image_path
-
-    def __str__(self):
-        return self.name + ', ' + str(len(self.image_path)) + ' images'
-
-    def __len__(self):
-        return len(self.image_path)
-
+filenames = []
+labels = []
 
 def get_image_paths(class_dir, label):
   '''
@@ -33,22 +20,22 @@ def get_image_paths(class_dir, label):
   Returns :
     A list containing absolute image paths
   '''
-  image_paths = []
   if os.path.isdir(class_dir):
     images = os.listdir(class_dir)
     for img in images:
-      dataset.append(ImageClass(label, os.path.join(class_dir, img)))
-  
+      if os.path.isfile(os.path.join(class_dir, img)):
+        filenames.append(os.path.join(class_dir, img))
+        labels.append(label)
 
-def get_dataset(path):
+def get_images_labels(path):
   '''
-  Get the image dataset from the given path and prepare train data
+  Get the image dataset from the given path and prepare filenames , labels list
 
   Arguments:
     path : Directory containing all input images
 
   Returns:
-    A list containing ImageClass objects 
+    Image filenames list and labels list
   '''
   path_exp = os.path.expanduser(path)
   classes = [path for path in os.listdir(path_exp) \
@@ -59,5 +46,7 @@ def get_dataset(path):
     class_name = classes[i]
     class_dir = os.path.join(path_exp, class_name)
     get_image_paths(class_dir,class_name)
-  return dataset
+
+  return filenames, labels
+
 
